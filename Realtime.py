@@ -53,6 +53,65 @@ class Realtime:
         elif event_type == 'response.audio.done':
             logging.info('AI finished speaking.')
 
+        elif event_type == 'function_call':
+            # handles function call
+            function_name = message['name']
+            params = message['parameters']
+
+            # example function calls
+            if function_name == 'open_test_results_page':
+                self.open_test_results_page(params['user_id')
+
+            elif function_name == 'check_for_available_appointment_slots':
+                self.open_appointments_page(params['appointment type'], params['date'])
+
+    """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
+    def open_test_results_page(self, user_id):
+        
+        # INSERT LOGIC FOR OPENING THE TEST RESULTS PAGE HERE
+        
+        logging.info(f'Opening test results page for user {user_id}')
+
+        # Sending function_call_output after action
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'Test results page opened!'
+            }
+        })
+
+        # OPTIONAL: add model responses after a function executes
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': 'Tell the user the test results page is open.'
+            }
+        })
+
+    def check_for_available_appointment_slots(self, appointment_type, date):
+        # logic
+        logging.info(f'Checking for available appointments for {date}')
+
+        # Sending function_call_output after action
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'XXX'
+            }
+        })
+
+        # OPTIONAL: add model responses after a function executes
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': 'List the available appointment times on their requested date.'
+            }
+        })
+
     def stop(self):
         """ Stop all processes cleanly. """
         logging.info('Shutting down Realtime session.')
