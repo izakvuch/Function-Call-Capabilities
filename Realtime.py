@@ -60,10 +60,13 @@ class Realtime:
 
             # example function calls
             if function_name == 'open_test_results_page':
-                self.open_test_results_page(params['user_id')
+                self.open_test_results_page(params['user_id'])
 
             elif function_name == 'check_for_available_appointment_slots':
-                self.open_appointments_page(params['appointment type'], params['date'])
+                self.open_appointments_page(params['appointment_type'], params['date'])
+
+            else: 
+                logging.error(f'Function {function_name} is not defined.')
 
             # ADD MORE
 
@@ -105,7 +108,7 @@ class Realtime:
             'type': 'conversation.item.create',
             'item': {
                 'type': 'function_call_output',
-                'function_call_output': 'XXX'
+                'function_call_output': 'Found available slots: {slots}'
             }
         })
 
