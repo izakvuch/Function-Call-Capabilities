@@ -65,6 +65,8 @@ class Realtime:
             elif function_name == 'check_for_available_appointment_slots':
                 self.open_appointments_page(params['appointment type'], params['date'])
 
+            # ADD MORE
+
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
     def open_test_results_page(self, user_id):
         
@@ -89,6 +91,10 @@ class Realtime:
                 'instructions': 'Tell the user the test results page is open.'
             }
         })
+
+
+    # ADD MORE FUNCTIONS
+    
 
     def check_for_available_appointment_slots(self, appointment_type, date):
         # logic
