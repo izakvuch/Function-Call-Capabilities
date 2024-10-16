@@ -22,6 +22,40 @@ class Socket:
         self.ws = create_connection(self.ws_url, header=[f'Authorization: Bearer {self.api_key}', 'OpenAI-Beta: realtime=v1'])
         logging.info('Connected to WebSocket.')
 
+        """HERE IS WHERE FUNCTION DEFINITIONS ARE SENT TO MODEL VIA A SESSION UPDATE"""
+        self.send({
+            'type': 'session.update',
+            'tools': [
+                {
+                    'name': 'open_test_results_page',
+                    'description': 'Open test results page for the user',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'user_id': {'type': 'string'}
+                        },
+                        'required': ['user_id']
+                    }
+                },
+                {
+                    'name': 'check_for_available_appointment_slots',
+                    'description': 'Check for available appointments for the requested date',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'appointment_type': {'type': 'string'},
+                            'date': {'type': 'string'}
+                        },
+                        'required': ['appointment_type']
+                        # making 'appointment_type' the only required field in case user asks to book appointment without date
+                    }
+                }
+                
+                """ADD MORE"""
+                    
+            ]
+        })
+
         # Start a unified loop for sending and receiving messages
         self.loop_thread = threading.Thread(target=self._socket_loop)
         self.loop_thread.start()
