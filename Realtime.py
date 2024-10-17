@@ -86,7 +86,7 @@ class Realtime:
             }
         })
 
-        # OPTIONAL: add model responses after a function executes
+        # OPTIONAL: add model responses after a function executes (CAN CHANGE TONE HERE)
         self.socket.send({
             'type': 'response.create',
             'response': {
