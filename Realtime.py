@@ -60,15 +60,15 @@ class Realtime:
 
             # example function calls
             if function_name == 'view_prescriptions':
-                self.view_prescription(params['user_id'])
+                self.open_test_results_page(params['user_id'])
 
             elif function_name == 'schedule_appointments':
-                self.schedule_appointments(params['user_id'], params['datetime'], params['reason'], params['doctor'])
+                self.schedule_appointments(params['user_id'], params['datetime'], params['reason'],params['doctor'])
 
             elif function_name == 'nearest_hospital':
                 self.nearest_hospital(params['user_id'])
 
-            elif function_name == 'view upcoming appointments':
+            elif function_name == 'View upcoming appointments':
                 self.view_upcoming_app(params['user_id'])
 
             elif function_name == 'cancel appointment':
@@ -82,7 +82,8 @@ class Realtime:
 
 
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
-    def view_prescription(self, user_id):
+    def open_test_results_page(self, user_id):
+        
         logging.info(f'Checking prescription routine for {user_id}')
         prescriptions = ['adderall', 'insulin', 'naxprozen', 'amoxicillin']
         selected_prescription = random.choice(prescriptions)
@@ -105,8 +106,6 @@ class Realtime:
                 'instructions': 'Tell the user their {selected_prescription} prescription is avaliable for pickup.'
             }
         })
-
-    
 
     
     def schedule_appointments(self, user_id, datetime, reason, doctor):
@@ -140,20 +139,9 @@ class Realtime:
             'type': 'conversation.item.create',
             'item': {
                 'type': 'function_call_output',
-                'function_call_output': 'Found nearest hospital'
+                'function_call_output': 'Successfully located hospital'
             }
         })
-
-
-        self.socket.send({
-            'type': 'response.create',
-            'response': {
-                'modalities': ['text'],
-                'instructions': f'The closest hospital to your location is {selected_hospital}'
-            }
-        })
-
-    # add response
 
     def view_upcoming_app(self, user_id):
         logging.info(f'Searching for upcoming appointments for user: {user_id}')

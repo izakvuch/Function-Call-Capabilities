@@ -52,8 +52,8 @@ class Socket:
                 }
                 
                 # ADD MORE
-                    
-            ]
+                
+            ],  # Added missing comma here
             'instructions': "insert prompt engineer + instructions for each method usage"
         })
 
