@@ -77,7 +77,7 @@ class Realtime:
         
         logging.info(f'Opening test results page for user {user_id}')
 
-        # Sending function_call_output after action
+        # Sending function_call_output after action (telling API what happened)
         self.socket.send({
             'type': 'conversation.item.create',
             'item': {
@@ -86,7 +86,7 @@ class Realtime:
             }
         })
 
-        # OPTIONAL: add model responses after a function executes (CAN CHANGE TONE HERE)
+        # OPTIONAL: add model responses after a function executes (interacting w/ user) (CAN CHANGE TONE HERE) 
         self.socket.send({
             'type': 'response.create',
             'response': {

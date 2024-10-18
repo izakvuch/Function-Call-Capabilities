@@ -54,7 +54,7 @@ class Socket:
                 # ADD MORE
                     
             ]
-            'instructions': "INSERT SYSTEM PROMPT HERE"
+            'instructions': "insert prompt engineer + instructions for each method usage"
         })
 
         # Start a unified loop for sending and receiving messages
