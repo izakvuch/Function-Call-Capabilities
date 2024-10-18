@@ -63,7 +63,7 @@ class Realtime:
                 self.view_prescription(params['user_id'])
 
             elif function_name == 'schedule_appointments':
-                self.schedule_appointments(params['user_id'], params['datetime'], params['reason'],params['doctor'])
+                self.schedule_appointments(params['user_id'], params['datetime'], params['reason'], params['doctor'])
 
             elif function_name == 'nearest_hospital':
                 self.nearest_hospital(params['user_id'])
@@ -83,7 +83,6 @@ class Realtime:
 
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
     def view_prescription(self, user_id):
-        
         logging.info(f'Checking prescription routine for {user_id}')
         prescriptions = ['adderall', 'insulin', 'naxprozen', 'amoxicillin']
         selected_prescription = random.choice(prescriptions)
@@ -141,7 +140,16 @@ class Realtime:
             'type': 'conversation.item.create',
             'item': {
                 'type': 'function_call_output',
-                'function_call_output': 'Successfully located hospital'
+                'function_call_output': 'Found nearest hospital'
+            }
+        })
+
+
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': f'The closest hospital to your location is {selected_hospital}'
             }
         })
 
