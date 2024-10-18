@@ -73,7 +73,7 @@ class Realtime:
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
     def open_test_results_page(self, user_id):
         
-        # INSERT LOGIC FOR OPENING THE TEST RESULTS PAGE HERE
+        # INSERT LOGIC FOR OPENING THE TEST RESULTS PAGE HERE (END WITH WRITING TO CSV)
         
         logging.info(f'Opening test results page for user {user_id}')
 
