@@ -108,6 +108,8 @@ class Realtime:
         })
 
     
+
+    
     def schedule_appointments(self, user_id, datetime, reason, doctor):
         logging.info(f'Checking for available appointments for {datetime}')
         with open("appointments_log.txt", 'a') as file:
@@ -142,6 +144,8 @@ class Realtime:
                 'function_call_output': 'Successfully located hospital'
             }
         })
+
+    # add response
 
     def view_upcoming_app(self, user_id):
         logging.info(f'Searching for upcoming appointments for user: {user_id}')
