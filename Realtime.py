@@ -60,7 +60,7 @@ class Realtime:
 
             # example function calls
             if function_name == 'view_prescriptions':
-                self.open_test_results_page(params['user_id'])
+                self.view_prescription(params['user_id'])
 
             elif function_name == 'schedule_appointments':
                 self.schedule_appointments(params['user_id'], params['datetime'], params['reason'],params['doctor'])
@@ -82,7 +82,7 @@ class Realtime:
 
 
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
-    def open_test_results_page(self, user_id):
+    def view_prescription(self, user_id):
         
         logging.info(f'Checking prescription routine for {user_id}')
         prescriptions = ['adderall', 'insulin', 'naxprozen', 'amoxicillin']
