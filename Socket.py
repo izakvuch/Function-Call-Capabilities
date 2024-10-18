@@ -23,12 +23,13 @@ class Socket:
         logging.info('Connected to WebSocket.')
 
         """HERE IS WHERE FUNCTION DEFINITIONS ARE SENT TO MODEL VIA A SESSION UPDATE"""
+        
         self.send({
             'type': 'session.update',
             'tools': [
                 {
-                    'name': 'open_test_results_page',
-                    'description': 'Open test results page for the user',
+                    'name': 'view_prescription',
+                    'description': 'View the user\'s current prescription details.',
                     'parameters': {
                         'type': 'object',
                         'properties': {
@@ -38,28 +39,74 @@ class Socket:
                     }
                 },
                 {
-                    'name': 'check_for_available_appointment_slots',
-                    'description': 'Check for available appointments for the requested date',
+                    'name': 'schedule_appointments',
+                    'description': 'Schedule an appointment for the user.',
                     'parameters': {
                         'type': 'object',
                         'properties': {
-                            'appointment_type': {'type': 'string'},
-                            'date': {'type': 'string'}
+                            'user_id': {'type': 'string'},
+                            'datetime': {'type': 'string'},
+                            'reason': {'type': 'string'},
+                            'doctor': {'type': 'string'}
                         },
-                        'required': ['appointment_type']
-                        # making 'appointment_type' the only required field in case user asks to book appointment without date
+                        'required': ['user_id', 'datetime', 'reason', 'doctor']
                     }
-                }
-                
-                # ADD MORE
-                
-            ],  # Added missing comma here
-            'instructions': "insert prompt engineer + instructions for each method usage"
-        })
+                },
+                {
+                    'name': 'nearest_hospital',
+                    'description': 'Find the nearest hospital for the user.',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'user_id': {'type': 'string'}
+                        },
+                        'required': ['user_id']
+                    }
+                },
+                {
+                    'name': 'view_upcoming_app',
+                    'description': 'View the user\'s upcoming appointments.',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'user_id': {'type': 'string'}
+                        },
+                        'required': ['user_id']
+                    }
+                },
+                {
+                    'name': 'cancel_app',
+                    'description': 'Cancel the user\'s appointment.',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'user_id': {'type': 'string'},
+                            'datetime': {'type': 'string'},
+                            'doctor': {'type': 'string'}
+                        },
+                        'required': ['user_id', 'datetime', 'doctor']
+                    }
+                },
+                {
+                    'name': 'relay_message',
+                    'description': 'Relay a message to the user\'s doctor.',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'user_id': {'type': 'string'},
+                            'doctor': {'type': 'string'},
+                            'message': {'type': 'string'}
+                        },
+                        'required': ['user_id', 'doctor', 'message']
+                        }
+                    } 
+                ], 
+                'instructions': "insert prompt engineer + instructions for each method usage"
+            })
 
-        # Start a unified loop for sending and receiving messages
-        self.loop_thread = threading.Thread(target=self._socket_loop)
-        self.loop_thread.start()
+            # Start a unified loop for sending and receiving messages
+            self.loop_thread = threading.Thread(target=self._socket_loop)
+            self.loop_thread.start()
 
     def _socket_loop(self):
         """ Main loop that handles both sending and receiving messages. """
