@@ -1,7 +1,7 @@
 import base64
 import logging
 import threading
-
+import random
 from Socket import Socket
 from AudioIO import AudioIO
 
@@ -59,65 +59,163 @@ class Realtime:
             params = message['parameters']
 
             # example function calls
-            if function_name == 'open_test_results_page':
+            if function_name == 'view_prescriptions':
                 self.open_test_results_page(params['user_id'])
 
-            elif function_name == 'check_for_available_appointment_slots':
-                self.open_appointments_page(params['appointment_type'], params['date'])
+            elif function_name == 'schedule_appointments':
+                self.schedule_appointments(params['user_id'], params['datetime'], params['reason'],params['doctor'])
+
+            elif function_name == 'nearest_hospital':
+                self.nearest_hospital(params['user_id'])
+
+            elif function_name == 'View upcoming appointments':
+                self.view_upcoming_app(params['user_id'])
+
+            elif function_name == 'cancel appointment':
+                self.cancel_app(params['user_id'], params['datetime'], params['doctor'])
+
+            elif function_name == 'relay message':
+                self.relay_message(params['user_id'], params['doctor'], params['message'])
 
             else: 
                 logging.error(f'Function {function_name} is not defined.')
 
-            # ADD MORE
 
     """THIS IS WHERE ALL THE METHODS FOR FUNCTION CALLS GO"""
     def open_test_results_page(self, user_id):
         
-        # INSERT LOGIC FOR OPENING THE TEST RESULTS PAGE HERE (END WITH WRITING TO CSV)
-        
-        logging.info(f'Opening test results page for user {user_id}')
-
-        # Sending function_call_output after action (telling API what happened)
-        self.socket.send({
-            'type': 'conversation.item.create',
-            'item': {
-                'type': 'function_call_output',
-                'function_call_output': 'Test results page opened!'
-            }
-        })
-
-        # OPTIONAL: add model responses after a function executes (interacting w/ user) (CAN CHANGE TONE HERE) 
-        self.socket.send({
-            'type': 'response.create',
-            'response': {
-                'modalities': ['text'],
-                'instructions': 'Tell the user the test results page is open.'
-            }
-        })
-
-
-    # ADD MORE FUNCTIONS
-    
-
-    def check_for_available_appointment_slots(self, appointment_type, date):
-        # logic
-        logging.info(f'Checking for available appointments for {date}')
-
+        logging.info(f'Checking prescription routine for {user_id}')
+        prescriptions = ['adderall', 'insulin', 'naxprozen', 'amoxicillin']
+        selected_prescription = random.choice(prescriptions)
+        with open("prescription_log.txt", 'a') as file:
+            file.write(f"{user_id}, {selected_prescription}\n")
         # Sending function_call_output after action
         self.socket.send({
             'type': 'conversation.item.create',
             'item': {
                 'type': 'function_call_output',
-                'function_call_output': 'Found available slots: {slots}'
+                'function_call_output': 'Checking prescriptions!'
             }
         })
 
-        # OPTIONAL: add model responses after a function executes
+        # OPTIONAL: add model responses after a function executes (CAN CHANGE TONE HERE)
         self.socket.send({
             'type': 'response.create',
             'response': {
                 'modalities': ['text'],
-                'instructions': 'List the available appointment times on their requested date.'
+                'instructions': 'Tell the user their {selected_prescription} prescription is avaliable for pickup.'
+            }
+        })
+
+    
+    def schedule_appointments(self, user_id, datetime, reason, doctor):
+        logging.info(f'Checking for available appointments for {datetime}')
+        with open("appointments_log.txt", 'a') as file:
+            file.write(f"{user_id}, {datetime}, {reason}, {doctor}\n")
+  
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'Successfully scheduled appointment'
+            }
+        })
+
+
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': f'Your appointment has been successfully scheduled for {datetime} with Dr. {doctor}. Thank you!'
+            }
+        })
+
+    def nearest_hospital(self, user_id):
+        logging.info(f'Searching for hospital nearest to your location')
+        hospitals = ['Sharp Chula Vista Medical Center', 'Sharp Coronado Hospital', 'Sharp Grossmont Hospital', 'Sharp Memorial Hospital', 'Sharp Mesa Vista Hospital']
+        selected_hospital = random.choice(hospitals)
+
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'Successfully located hospital'
+            }
+        })
+
+    def view_upcoming_app(self, user_id):
+        logging.info(f'Searching for upcoming appointments for user: {user_id}')
+    
+        upcoming_appointments = []
+
+        with open("appointments_log.txt", 'r') as file:
+            for line in file:
+                entry_user_id, datetime, reason, doctor = line.strip().split(', ')
+                if entry_user_id == user_id:
+                    upcoming_appointments.append({
+                        'datetime': datetime,
+                        'reason': reason,
+                        'doctor': doctor
+                    })
+
+        if upcoming_appointments:
+            logging.info(f'Found {len(upcoming_appointments)} upcoming appointments for user {user_id}.')
+        else:
+            logging.info(f'No upcoming appointments found for user {user_id}.')
+
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': f'Found {len(upcoming_appointments)} upcoming appointments for you.'
+            }
+        })
+        
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': f'Your have an appointment on {upcoming_appointments["datetime"]} with Dr. {upcoming_appointments["doctor"]} for {upcoming_appointments["reason"]}'
+            }
+        })
+
+    def cancel_app(self, user_id, datetime, doctor):
+        logging.info(f'Cancelling appointments for {user_id} on {datetime} with {doctor}')
+
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'Successfully cancelled appointment'
+            }
+        })
+
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': f'Your appointment on {datetime} with Dr. {doctor} has been successfully cancelled'
+            }
+        })
+
+    def relay_message(self, user_id, doctor, message):
+        logging.info(f'Relaying message to {doctor}')
+        with open("message_log.txt", 'a') as file:
+            file.write(f"{user_id}, {doctor}, {message}\n")
+
+        self.socket.send({
+            'type': 'conversation.item.create',
+            'item': {
+                'type': 'function_call_output',
+                'function_call_output': 'Successfully relayed message'
+            }
+        })
+
+        self.socket.send({
+            'type': 'response.create',
+            'response': {
+                'modalities': ['text'],
+                'instructions': f'Your message to Dr. {doctor}. Has been sent. Thank you!'
             }
         })
 
