@@ -68,7 +68,7 @@ class Realtime:
             elif function_name == 'nearest_hospital':
                 self.nearest_hospital(params['user_id'])
 
-            elif function_name == 'View upcoming appointments':
+            elif function_name == 'view upcoming appointments':
                 self.view_upcoming_app(params['user_id'])
 
             elif function_name == 'cancel appointment':
